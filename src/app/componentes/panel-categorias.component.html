@@ -1,0 +1,59 @@
+<section class="tarjeta" *ngIf="reparto as r">
+  <div class="tarjeta__cabecera">
+    <h2 class="tarjeta__titulo">{{ 'categorias_titulo' | t }}</h2>
+    <p class="tarjeta__pie mono">{{ r.total | euros }}</p>
+  </div>
+
+  <div class="periodo" role="group" [attr.aria-label]="'categorias_titulo' | t">
+    <button
+      type="button"
+      class="periodo__opcion"
+      [class.periodo__opcion--activa]="ambito === 'mes'"
+      [attr.aria-pressed]="ambito === 'mes'"
+      (click)="cambiarAmbito('mes')"
+    >
+      {{ 'periodo_mes' | t }}
+    </button>
+    <button
+      type="button"
+      class="periodo__opcion"
+      [class.periodo__opcion--activa]="ambito === 'anio'"
+      [attr.aria-pressed]="ambito === 'anio'"
+      (click)="cambiarAmbito('anio')"
+    >
+      {{ 'periodo_anio' | t }}
+    </button>
+  </div>
+
+  <ul class="reparto" *ngIf="r.total > 0; else sinGasto">
+    <li
+      class="reparto__fila"
+      *ngFor="let fila of r.filas; trackBy: clave"
+      [class.reparto__fila--fijos]="fila.fijos"
+      [class.reparto__fila--vacia]="fila.importe === 0"
+    >
+      <span class="reparto__nombre">
+        <ng-container *ngIf="fila.fijos">{{ 'balance_fijos' | t }}</ng-container>
+        <ng-container *ngIf="!fila.fijos">
+          {{ fila.huerfana ? ('sin_categoria' | t) : fila.categoria }}
+        </ng-container>
+      </span>
+      <span class="reparto__importe mono">{{ fila.importe | euros: 'raya' }}</span>
+      <span class="reparto__carril" aria-hidden="true">
+        <span class="reparto__barra" [style.width.%]="ancho(fila)"></span>
+      </span>
+      <span class="reparto__porcentaje mono">{{ fila.porcentaje | porcentaje }}</span>
+    </li>
+  </ul>
+
+  <ng-template #sinGasto>
+    <p class="vacio">{{ 'categorias_vacio' | t }}</p>
+  </ng-template>
+
+  <p class="tarjeta__pie-nota" *ngIf="r.total > 0">
+    {{ 'categorias_nota' | t }}
+    <ng-container *ngIf="ambito === 'anio'">
+      {{ 'categorias_nota_anio' | t: { n: r.mesesContados } }}
+    </ng-container>
+  </p>
+</section>

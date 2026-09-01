@@ -1,0 +1,146 @@
+<section class="tarjeta">
+  <div class="tarjeta__cabecera">
+    <h2 class="tarjeta__titulo">{{ 'diarios_titulo' | t }}</h2>
+    <p class="tarjeta__pie mono" *ngIf="resumen as r">
+      {{ 'diarios_resumen' | t: { n: r.rejilla.length, total: (r.totalDiarios | euros) } }}
+    </p>
+  </div>
+
+  <form class="formulario" (ngSubmit)="apuntar()">
+    <label class="campo campo--fecha">
+      <span class="campo__etiqueta">{{ 'fecha' | t }}</span>
+      <input class="campo__control mono" type="date" name="fecha" [(ngModel)]="fecha" required />
+    </label>
+
+    <label class="campo campo--categoria">
+      <span class="campo__etiqueta">{{ 'categoria' | t }}</span>
+      <select class="campo__control" name="categoria" [(ngModel)]="categoria">
+        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+      </select>
+    </label>
+
+    <label class="campo campo--concepto">
+      <span class="campo__etiqueta">{{ 'concepto' | t }}</span>
+      <input
+        class="campo__control"
+        type="text"
+        name="concepto"
+        maxlength="80"
+        [placeholder]="'diarios_concepto_ph' | t"
+        [(ngModel)]="concepto"
+      />
+    </label>
+
+    <label class="campo campo--importe">
+      <span class="campo__etiqueta">{{ 'importe' | t }}</span>
+      <input
+        class="campo__control mono campo__control--derecha"
+        type="number"
+        name="importe"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="0,00"
+        [(ngModel)]="importe"
+      />
+    </label>
+
+    <button type="submit" class="boton boton--sello campo--boton">
+      {{ 'diarios_apuntar' | t }}
+    </button>
+  </form>
+
+  <div class="fila-secundaria">
+    <button type="button" class="enlace" *ngIf="!anadiendoCategoria" (click)="abrirCategoria()">
+      {{ 'nueva_categoria' | t }}
+    </button>
+
+    <span class="fila-campo" *ngIf="anadiendoCategoria">
+      <input
+        class="campo__control campo__control--pequeno"
+        type="text"
+        maxlength="30"
+        [placeholder]="'nueva_categoria_ph' | t"
+        [(ngModel)]="nuevaCategoria"
+        name="nuevaCategoria"
+        (keyup.enter)="guardarCategoria()"
+      />
+      <button type="button" class="boton boton--linea boton--pequeno" (click)="guardarCategoria()">
+        {{ 'anadir' | t }}
+      </button>
+      <button type="button" class="enlace" (click)="cancelarCategoria()">
+        {{ 'cancelar' | t }}
+      </button>
+    </span>
+  </div>
+
+  <p class="nota nota--error" *ngIf="error as e">{{ e.clave | t: e.params }}</p>
+
+  <!-- Rejilla: categorías en filas, semanas del mes en columnas -->
+  <div class="tabla-envoltorio" *ngIf="resumen as r">
+    <table class="tabla tabla--rejilla">
+      <caption class="tabla__titulo">{{ 'rejilla_titulo' | t }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'categoria' | t }}</th>
+          <th scope="col" *ngFor="let etiqueta of etiquetasSemana; index as i">
+            <span class="tabla__semana">{{ 'semana_abrev' | t: { n: i + 1 } }}</span>
+            <span class="tabla__rango mono">{{ etiqueta }}</span>
+          </th>
+          <th scope="col" class="tabla__total">{{ 'mes' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fila of r.rejilla">
+          <th scope="row">{{ fila.huerfana ? ('sin_categoria' | t) : fila.categoria }}</th>
+          <td class="mono" *ngFor="let importe of fila.semanas" [class.vacia]="importe === 0">
+            {{ importe | euros: 'raya' }}
+          </td>
+          <td class="mono tabla__total">{{ fila.total | euros: 'raya' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">{{ 'total' | t }}</th>
+          <td class="mono" *ngFor="let total of r.totalesSemana" [class.vacia]="total === 0">
+            {{ total | euros: 'raya' }}
+          </td>
+          <td class="mono tabla__total">{{ r.totalDiarios | euros }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="lista-semanas" *ngIf="semanas.length; else sinApuntes">
+    <div class="semana" *ngFor="let semana of semanas">
+      <h3 class="semana__cabecera">
+        <span class="semana__nombre">{{ 'semana_titulo' | t: { n: semana.numero } }}</span>
+        <span class="semana__rango mono">{{ 'semana_dias' | t: { rango: semana.etiqueta } }}</span>
+        <span class="semana__total mono">{{ semana.total | euros }}</span>
+      </h3>
+      <ul class="apuntes">
+        <li class="apunte" *ngFor="let apunte of semana.apuntes">
+          <span class="apunte__fecha mono">{{ apunte.fecha | fechaCorta }}</span>
+          <span class="apunte__categoria">
+            {{ apunte.categoria || ('sin_categoria' | t) }}
+          </span>
+          <span class="apunte__concepto">{{ apunte.concepto || '—' }}</span>
+          <span class="apunte__importe mono">{{ apunte.importe | euros }}</span>
+          <button
+            type="button"
+            class="apunte__borrar"
+            (click)="borrar(apunte)"
+            [attr.aria-label]="'borrar_aria' | t: { que: apunte.concepto || apunte.categoria }"
+            [title]="'borrar' | t"
+          >
+            ×
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <ng-template #sinApuntes>
+    <p class="vacio">{{ 'diarios_vacio' | t }}</p>
+  </ng-template>
+</section>

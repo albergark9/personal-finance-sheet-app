@@ -1,0 +1,69 @@
+<div class="portada">
+  <div class="portada__hoja">
+    <div class="portada__cabecera">
+      <p class="cejilla">{{ 'portada_cejilla' | t }}</p>
+      <fc-selector-idioma sitio="portada"></fc-selector-idioma>
+    </div>
+
+    <h1 class="portada__titulo">
+      {{ 'portada_titulo_1' | t }}<br />
+      {{ 'portada_titulo_2' | t }}<br />
+      <span class="portada__titulo-marca">{{ 'portada_titulo_3' | t }}</span>
+    </h1>
+
+    <p class="portada__entradilla">{{ 'portada_entradilla' | t }}</p>
+
+    <div class="portada__opciones">
+      <section class="opcion">
+        <h2 class="opcion__titulo">
+          <span class="opcion__marca">A</span> {{ 'portada_opcion_a' | t }}
+        </h2>
+        <p class="opcion__ayuda">{{ 'portada_opcion_a_ayuda' | t }}</p>
+        <div class="fila-campo">
+          <label class="campo campo--anio">
+            <span class="campo__etiqueta">{{ 'portada_anio' | t }}</span>
+            <input
+              class="campo__control mono"
+              type="number"
+              min="2000"
+              max="2100"
+              step="1"
+              [(ngModel)]="anio"
+              (keyup.enter)="crearLibro()"
+              name="anio"
+            />
+          </label>
+          <button type="button" class="boton boton--sello" (click)="crearLibro()">
+            {{ 'portada_crear' | t }}
+          </button>
+        </div>
+      </section>
+
+      <section class="opcion">
+        <h2 class="opcion__titulo">
+          <span class="opcion__marca">B</span> {{ 'portada_opcion_b' | t }}
+        </h2>
+        <p class="opcion__ayuda">{{ 'portada_opcion_b_ayuda' | t }}</p>
+        <label class="boton boton--linea">
+          <input
+            class="oculto-visualmente"
+            type="file"
+            accept="application/json,.json"
+            (change)="alElegirFichero($event)"
+          />
+          {{ (leyendo ? 'portada_leyendo' : 'portada_elegir') | t }}
+        </label>
+      </section>
+    </div>
+
+    <p class="nota nota--error portada__error" *ngIf="error as e">
+      {{ e.clave | t: e.params }}
+    </p>
+
+    <ul class="portada__detalles">
+      <li>{{ 'portada_detalle_1' | t }}</li>
+      <li>{{ 'portada_detalle_2' | t }}</li>
+      <li>{{ 'portada_detalle_3' | t }}</li>
+    </ul>
+  </div>
+</div>

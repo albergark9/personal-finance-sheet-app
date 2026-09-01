@@ -1,0 +1,52 @@
+<fc-inicio
+  *ngIf="!libro"
+  (crear)="crearLibro($event)"
+  (abrir)="abrirLibro($event)"
+  (aviso)="avisar($event)"
+></fc-inicio>
+
+<ng-container *ngIf="libro as l">
+  <fc-barra
+    [anio]="l.anio"
+    [sucio]="sucio"
+    [nombreFichero]="nombreFichero"
+    (descargar)="descargar()"
+    (cambiarAnio)="cambiarDeAnio()"
+  ></fc-barra>
+
+  <main class="lienzo">
+    <div class="notas" *ngIf="notas.length">
+      <p class="nota" [ngClass]="'nota--' + nota.tipo" *ngFor="let nota of notas; index as i">
+        <span>{{ nota.incidencia.clave | t: nota.incidencia.params }}</span>
+        <button
+          type="button"
+          class="nota__cerrar"
+          (click)="cerrarNota(i)"
+          [attr.aria-label]="'cerrar_aviso' | t"
+        >
+          ×
+        </button>
+      </p>
+    </div>
+
+    <fc-cinta-meses [anual]="anual" [mesActivo]="mes"></fc-cinta-meses>
+
+    <div class="columnas">
+      <div class="columna columna--principal">
+        <fc-panel-diarios [libro]="l" [mes]="mes" [resumen]="resumen"></fc-panel-diarios>
+        <fc-panel-ingresos [libro]="l" [mes]="mes" [resumen]="resumen"></fc-panel-ingresos>
+        <fc-panel-fijos [libro]="l"></fc-panel-fijos>
+      </div>
+
+      <div class="columna columna--lateral">
+        <fc-panel-resumen [resumen]="resumen" [anio]="l.anio" [mes]="mes"></fc-panel-resumen>
+        <fc-panel-categorias [libro]="l" [mes]="mes"></fc-panel-categorias>
+        <fc-panel-anual [anual]="anual" [anio]="l.anio" [mesActivo]="mes"></fc-panel-anual>
+      </div>
+    </div>
+
+    <footer class="pie">
+      <p>{{ 'pie' | t: { fichero: nombreFichero } }}</p>
+    </footer>
+  </main>
+</ng-container>

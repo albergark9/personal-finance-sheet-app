@@ -1,0 +1,17 @@
+<nav class="cinta" [attr.aria-label]="'cinta_aria' | t">
+  <button
+    type="button"
+    class="mes"
+    *ngFor="let fila of filas"
+    [class.mes--activo]="fila.mes === mesActivo"
+    [class.mes--vacio]="!fila.tieneDatos"
+    [attr.aria-current]="fila.mes === mesActivo ? 'true' : null"
+    [title]="titulo(fila)"
+    (click)="ir(fila.mes)"
+  >
+    <span class="mes__grafico" aria-hidden="true">
+      <span class="mes__barra" [style.height.%]="altura(fila)"></span>
+    </span>
+    <span class="mes__nombre">{{ fila.mes | mes: 'corto' }}</span>
+  </button>
+</nav>

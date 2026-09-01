@@ -1,0 +1,6 @@
+<label class="idioma" [class.idioma--portada]="sitio === 'portada'">
+  <span class="oculto-visualmente">{{ 'idioma' | t }}</span>
+  <select class="idioma__control" [value]="actual" (change)="cambiar($event)">
+    <option *ngFor="let opcion of opciones" [value]="opcion.codigo">{{ opcion.nombre }}</option>
+  </select>
+</label>

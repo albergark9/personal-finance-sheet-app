@@ -1,0 +1,70 @@
+<section class="tarjeta tarjeta--resumen" *ngIf="resumen as r">
+  <div class="tarjeta__cabecera">
+    <h2 class="tarjeta__titulo">{{ mes | mes }}</h2>
+    <p class="tarjeta__pie mono">{{ 'resumen_apuntes' | t: { n: r.numApuntes } }}</p>
+  </div>
+
+  <!--
+    El sello es el veredicto del mes. Se vuelve a dibujar al cambiar de mes
+    (el ngFor sobre [r.mes] destruye y recrea el nodo) para que la animación
+    de estampado se repita.
+  -->
+  <ng-container *ngFor="let clave of [r.mes]">
+    <div
+      class="sello"
+      [class.sello--debe]="!positivo"
+      [class.sello--inerte]="!r.tieneDatos"
+      role="status"
+    >
+      <p class="sello__rotulo">
+        {{ (positivo ? 'sello_ahorrado' : 'sello_sobregiro') | t }}
+      </p>
+      <p class="sello__cifra mono">{{ ahorro | euros }}</p>
+      <p class="sello__pie mono">{{ mes | mes }} {{ anio }}</p>
+    </div>
+  </ng-container>
+
+  <dl class="balance">
+    <div class="balance__fila balance__fila--haber">
+      <dt>{{ 'balance_ingresos' | t }}</dt>
+      <dd class="mono">{{ r.totalIngresos | euros }}</dd>
+    </div>
+    <div class="balance__fila">
+      <dt>{{ 'balance_diarios' | t }}</dt>
+      <dd class="mono">− {{ r.totalDiarios | euros }}</dd>
+    </div>
+    <div class="balance__fila">
+      <dt>{{ 'balance_fijos' | t }}</dt>
+      <dd class="mono">− {{ r.totalFijos | euros }}</dd>
+    </div>
+    <div class="balance__fila balance__fila--suma">
+      <dt>{{ 'balance_total' | t }}</dt>
+      <dd class="mono">{{ r.totalGastos | euros }}</dd>
+    </div>
+  </dl>
+
+  <div class="tasa" *ngIf="r.tasaAhorro !== null">
+    <div class="tasa__cabecera">
+      <span class="tasa__etiqueta">{{ 'tasa_etiqueta' | t }}</span>
+      <span class="tasa__valor mono">{{ r.tasaAhorro | porcentaje }}</span>
+    </div>
+    <div class="tasa__carril" aria-hidden="true">
+      <div
+        class="tasa__relleno"
+        [class.tasa__relleno--debe]="!positivo"
+        [style.width.%]="anchoTasa"
+      ></div>
+    </div>
+    <p class="tasa__ayuda">{{ 'tasa_ayuda' | t }}</p>
+  </div>
+
+  <table class="tabla tabla--desglose" *ngIf="r.totalFijos > 0">
+    <caption class="tabla__titulo">{{ 'fijos_por_categoria' | t }}</caption>
+    <tbody>
+      <tr *ngFor="let fila of r.fijos">
+        <th scope="row">{{ fila.huerfana ? ('sin_categoria' | t) : fila.etiqueta }}</th>
+        <td class="mono">{{ fila.importe | euros: 'raya' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

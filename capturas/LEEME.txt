@@ -1,0 +1,11 @@
+Capturas de la aplicación en marcha (Chromium, servidor de desarrollo).
+
+portada.png        pantalla inicial en español, con el selector de idioma
+aplicacion.png     vista completa en español, julio con datos
+movil.png          la misma vista a 390 px de ancho
+sello-en-rojo.png  el sello cuando el mes sale en negativo
+categorias.png     el apartado de gasto por categoría
+categorias-de.png  el mismo apartado en alemán y en vista anual
+ingles.png         la aplicación en inglés  (€1,234.50)
+aleman.png         la aplicación en alemán  (1.234,50 €)
+ruso.png           la aplicación en ruso    (1 234,50 €)

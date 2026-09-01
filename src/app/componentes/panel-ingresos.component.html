@@ -1,0 +1,111 @@
+<section class="tarjeta">
+  <div class="tarjeta__cabecera">
+    <h2 class="tarjeta__titulo">{{ 'ingresos_titulo' | t }}</h2>
+    <p class="tarjeta__pie mono" *ngIf="resumen as r">{{ r.totalIngresos | euros }}</p>
+  </div>
+
+  <form class="formulario" (ngSubmit)="anadir()">
+    <label class="campo campo--fecha">
+      <span class="campo__etiqueta">{{ 'fecha' | t }}</span>
+      <input
+        class="campo__control mono"
+        type="date"
+        name="fechaIngreso"
+        [(ngModel)]="fecha"
+        required
+      />
+    </label>
+
+    <label class="campo campo--categoria">
+      <span class="campo__etiqueta">{{ 'origen' | t }}</span>
+      <select class="campo__control" name="origen" [(ngModel)]="origen">
+        <option *ngFor="let o of origenes" [value]="o">{{ o }}</option>
+      </select>
+    </label>
+
+    <label class="campo campo--concepto">
+      <span class="campo__etiqueta">{{ 'concepto' | t }}</span>
+      <input
+        class="campo__control"
+        type="text"
+        name="conceptoIngreso"
+        maxlength="80"
+        [placeholder]="'ingresos_concepto_ph' | t"
+        [(ngModel)]="concepto"
+      />
+    </label>
+
+    <label class="campo campo--importe">
+      <span class="campo__etiqueta">{{ 'importe' | t }}</span>
+      <input
+        class="campo__control mono campo__control--derecha"
+        type="number"
+        name="importeIngreso"
+        min="0"
+        step="0.01"
+        inputmode="decimal"
+        placeholder="0,00"
+        [(ngModel)]="importe"
+      />
+    </label>
+
+    <button type="submit" class="boton boton--haber campo--boton">{{ 'anadir' | t }}</button>
+  </form>
+
+  <div class="fila-secundaria">
+    <button type="button" class="enlace" *ngIf="!anadiendoOrigen" (click)="abrirOrigen()">
+      {{ 'nuevo_origen' | t }}
+    </button>
+    <span class="fila-campo" *ngIf="anadiendoOrigen">
+      <input
+        class="campo__control campo__control--pequeno"
+        type="text"
+        maxlength="30"
+        [placeholder]="'nuevo_origen_ph' | t"
+        name="nuevoOrigen"
+        [(ngModel)]="nuevoOrigen"
+        (keyup.enter)="guardarOrigen()"
+      />
+      <button type="button" class="boton boton--linea boton--pequeno" (click)="guardarOrigen()">
+        {{ 'anadir' | t }}
+      </button>
+      <button type="button" class="enlace" (click)="cancelarOrigen()">{{ 'cancelar' | t }}</button>
+    </span>
+  </div>
+
+  <p class="nota nota--error" *ngIf="error as e">{{ e.clave | t: e.params }}</p>
+
+  <ul class="apuntes" *ngIf="entradas.length; else sinIngresos">
+    <li class="apunte apunte--haber" *ngFor="let ingreso of entradas">
+      <span class="apunte__fecha mono">{{ ingreso.fecha | fechaCorta }}</span>
+      <span class="apunte__categoria">{{ ingreso.origen || ('sin_origen' | t) }}</span>
+      <span class="apunte__concepto">{{ ingreso.concepto || '—' }}</span>
+      <span class="apunte__importe mono">{{ ingreso.importe | euros }}</span>
+      <button
+        type="button"
+        class="apunte__borrar"
+        (click)="borrar(ingreso)"
+        [attr.aria-label]="'borrar_aria' | t: { que: ingreso.concepto || ingreso.origen }"
+        [title]="'borrar' | t"
+      >
+        ×
+      </button>
+    </li>
+  </ul>
+
+  <ng-template #sinIngresos>
+    <p class="vacio">{{ 'ingresos_vacio' | t }}</p>
+  </ng-template>
+
+  <ng-container *ngIf="resumen as r">
+    <table class="tabla tabla--desglose" *ngIf="r.totalIngresos > 0">
+      <caption class="tabla__titulo">{{ 'por_origen' | t }}</caption>
+      <tbody>
+        <tr *ngFor="let fila of r.ingresos" [class.vacia]="fila.importe === 0">
+          <th scope="row">{{ fila.huerfana ? ('sin_origen' | t) : fila.etiqueta }}</th>
+          <td class="mono">{{ fila.importe | euros: 'raya' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</section>

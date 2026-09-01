@@ -22,7 +22,14 @@
 # TypeScript cache
 *.tsbuildinfo
 
+# Salida compilada de las pruebas (script "comprobar")
+/pruebas/js
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+
+# macOS
+.DS_Store

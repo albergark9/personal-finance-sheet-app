@@ -1,0 +1,25 @@
+<header class="barra">
+  <div class="barra__interior">
+    <div class="barra__marca">
+      <span class="barra__logo">{{ 'app_nombre' | t }}</span>
+      <span class="barra__anio mono">{{ anio }}</span>
+    </div>
+
+    <div class="barra__acciones">
+      <span class="estado" [class.estado--sucio]="sucio">
+        <span class="estado__punto" aria-hidden="true"></span>
+        {{ (sucio ? 'estado_sucio' : 'estado_limpio') | t }}
+      </span>
+
+      <fc-selector-idioma sitio="barra"></fc-selector-idioma>
+
+      <button type="button" class="boton boton--sello" (click)="descargar.emit()">
+        {{ 'descargar' | t: { fichero: nombreFichero } }}
+      </button>
+
+      <button type="button" class="boton boton--fantasma" (click)="cambiarAnio.emit()">
+        {{ 'cerrar_fichero' | t }}
+      </button>
+    </div>
+  </div>
+</header>

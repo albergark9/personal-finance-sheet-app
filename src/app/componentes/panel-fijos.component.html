@@ -1,0 +1,110 @@
+<section class="tarjeta">
+  <div class="tarjeta__cabecera">
+    <h2 class="tarjeta__titulo">{{ 'fijos_titulo' | t }}</h2>
+    <p class="tarjeta__pie mono">
+      {{ 'fijos_resumen' | t: { n: activos, total: (total | euros) } }}
+    </p>
+  </div>
+
+  <p class="tarjeta__intro">{{ 'fijos_intro' | t }}</p>
+
+  <div class="tabla-envoltorio">
+    <table class="tabla tabla--fijos">
+      <thead>
+        <tr>
+          <th scope="col" class="col-activo">{{ 'fijos_col_cuenta' | t }}</th>
+          <th scope="col">{{ 'concepto' | t }}</th>
+          <th scope="col">{{ 'categoria' | t }}</th>
+          <th scope="col" class="col-dia">{{ 'dia' | t }}</th>
+          <th scope="col" class="col-importe">{{ 'importe' | t }}</th>
+          <th scope="col"><span class="oculto-visualmente">{{ 'quitar' | t }}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fijo of fijos; trackBy: clave" [class.fila--apagada]="!fijo.activo">
+          <td class="col-activo">
+            <input
+              type="checkbox"
+              class="casilla"
+              [checked]="fijo.activo"
+              (change)="alternar(fijo)"
+              [attr.aria-label]="'fijos_contar_aria' | t: { que: nombre(fijo) }"
+            />
+          </td>
+          <td>
+            <input
+              class="celda"
+              type="text"
+              maxlength="40"
+              [placeholder]="'fijos_concepto_ph' | t"
+              [ngModel]="fijo.concepto"
+              (ngModelChange)="cambiarConcepto(fijo, $event)"
+              [name]="'concepto-' + fijo.id"
+            />
+          </td>
+          <td>
+            <select
+              class="celda"
+              [ngModel]="fijo.categoria"
+              (ngModelChange)="cambiarCategoria(fijo, $event)"
+              [name]="'categoria-' + fijo.id"
+            >
+              <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+              <option *ngIf="fijo.categoria && !categorias.includes(fijo.categoria)" [value]="fijo.categoria">
+                {{ fijo.categoria }}
+              </option>
+            </select>
+          </td>
+          <td class="col-dia">
+            <input
+              class="celda celda--mono"
+              type="number"
+              min="1"
+              max="31"
+              step="1"
+              placeholder="—"
+              [ngModel]="fijo.diaCargo"
+              (ngModelChange)="cambiarDia(fijo, $event)"
+              [name]="'dia-' + fijo.id"
+            />
+          </td>
+          <td class="col-importe">
+            <input
+              class="celda celda--mono celda--derecha"
+              type="number"
+              min="0"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="0,00"
+              [ngModel]="fijo.importe"
+              (ngModelChange)="cambiarImporte(fijo, $event)"
+              [name]="'importe-' + fijo.id"
+            />
+          </td>
+          <td>
+            <button
+              type="button"
+              class="apunte__borrar"
+              (click)="borrar(fijo)"
+              [attr.aria-label]="'quitar_aria' | t: { que: nombre(fijo) }"
+              [title]="'quitar' | t"
+            >
+              ×
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row" colspan="4">{{ 'fijos_total' | t }}</th>
+          <td class="mono col-importe">{{ total | euros }}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <button type="button" class="boton boton--linea" (click)="anadir()">
+    {{ 'fijos_anadir' | t }}
+  </button>
+</section>

@@ -1,0 +1,60 @@
+<section class="tarjeta" *ngIf="anual as a">
+  <div class="tarjeta__cabecera">
+    <h2 class="tarjeta__titulo">{{ 'anual_titulo' | t }}</h2>
+    <p class="tarjeta__pie mono">{{ 'anual_resumen' | t: { n: a.mesesConDatos } }}</p>
+  </div>
+
+  <div class="tabla-envoltorio">
+    <table class="tabla tabla--anual">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'mes' | t }}</th>
+          <th scope="col">{{ 'anual_diarios' | t }}</th>
+          <th scope="col">{{ 'anual_fijos' | t }}</th>
+          <th scope="col">{{ 'anual_ingresos' | t }}</th>
+          <th scope="col" class="tabla__total">{{ 'anual_ahorro' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let fila of a.filas"
+          class="fila-mes"
+          [class.fila--apagada]="!fila.tieneDatos"
+          [class.fila--activa]="fila.mes === mesActivo"
+          (click)="ir(fila)"
+        >
+          <th scope="row">
+            <button type="button" class="enlace enlace--mes">{{ fila.mes | mes }}</button>
+          </th>
+          <td class="mono">{{ fila.tieneDatos ? (fila.diarios | euros: 'raya') : '' }}</td>
+          <td class="mono">{{ fila.tieneDatos ? (fila.fijos | euros: 'raya') : '' }}</td>
+          <td class="mono">{{ fila.tieneDatos ? (fila.ingresos | euros: 'raya') : '' }}</td>
+          <td
+            class="mono tabla__total"
+            [class.cifra--haber]="fila.tieneDatos && fila.ahorro > 0"
+            [class.cifra--debe]="fila.tieneDatos && fila.ahorro < 0"
+          >
+            {{ fila.tieneDatos ? (fila.ahorro | euros) : ('anual_sin_apuntes' | t) }}
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">{{ 'anual_total' | t: { anio: anio } }}</th>
+          <td class="mono">{{ a.totalDiarios | euros: 'raya' }}</td>
+          <td class="mono">{{ a.totalFijos | euros: 'raya' }}</td>
+          <td class="mono">{{ a.totalIngresos | euros: 'raya' }}</td>
+          <td
+            class="mono tabla__total"
+            [class.cifra--haber]="a.totalAhorro > 0"
+            [class.cifra--debe]="a.totalAhorro < 0"
+          >
+            {{ a.totalAhorro | euros }}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p class="tarjeta__pie-nota">{{ 'anual_nota' | t }}</p>
+</section>
